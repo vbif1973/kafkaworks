@@ -1,9 +1,11 @@
 package com.demo.engine;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -15,7 +17,7 @@ import org.apache.kafka.common.errors.WakeupException;
 public class StringConsumer extends Thread {
 
     private static final String TOPIC = "testpartitions";
-    private static final String GROUP_ID = "cliettwopartitions";
+    private static final String GROUP_ID = "cliettwopartitions2";
     private String topicName;
     private String groupId;
     private long endingOffset;
@@ -38,30 +40,20 @@ public class StringConsumer extends Thread {
 
         kafkaConsumer = new KafkaConsumer<String, String>(configProperties);
         kafkaConsumer.subscribe(Arrays.asList(topicName));
-        kafkaConsumer.poll(100);
+        ConsumerRecords<String, String> records1 = kafkaConsumer.poll(100);
+
+        Set<TopicPartition> partitions = kafkaConsumer.assignment();
+
+        System.out.println("Current position before seekToBeginning is: "+kafkaConsumer.position(new ArrayList<TopicPartition>(partitions).get(0)));
+        System.out.println("Current commited position before seekToBeginning is: "+kafkaConsumer.committed(new ArrayList<TopicPartition>(partitions).get(0)));
+
         kafkaConsumer.seekToBeginning(kafkaConsumer.assignment());
 
-//        kafkaConsumer.subscribe(Arrays.asList(topicName), new ConsumerRebalanceListener() {
-//            public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-//                System.out.printf("%s topic-partitions are revoked from this consumer\n", Arrays.toString(partitions.toArray()));
-//            }
-//
-//            public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-//                System.out.printf("%s topic-partitions are assigned to this consumer\n", Arrays.toString(partitions.toArray()));
-//                Iterator<TopicPartition> topicPartitionIterator = partitions.iterator();
-//                while (topicPartitionIterator.hasNext()) {
-//                    TopicPartition topicPartition = topicPartitionIterator.next();
-//                    System.out.println("Current offset is " + kafkaConsumer.position(topicPartition) + " committed offset is ->" +
-//                            kafkaConsumer.committed(topicPartition));
-//                    System.out.println("Resetting offset to 0");
-//                    kafkaConsumer.seekToBeginning(partitions);
-//                    System.out.println("Customer current position is " + kafkaConsumer.position(topicPartition));
-//                    System.out.println("Customer current partition is: " + topicPartition);
-//                }
-//            }
-//        });
+        System.out.println("Current position after seekToBeginning is: "+kafkaConsumer.position(new ArrayList<TopicPartition>(partitions).get(0)));
+        System.out.println("Current commited position after seekToBeginning is: "+kafkaConsumer.committed(new ArrayList<TopicPartition>(partitions).get(0)));
 
-        //Start processing messages
+
+//        //Start processing messages
         try {
             boolean keepOnReading = true;
             while (keepOnReading) {

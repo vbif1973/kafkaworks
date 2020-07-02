@@ -21,7 +21,6 @@ public class StringConsumer extends Thread {
 
     private String groupId = "cliettwopartitions3";
 
-    private static final String GROUP_ID = "cliettwopartitions3";
     private long endingOffset;
     private KafkaConsumer<String, String> kafkaConsumer;
 

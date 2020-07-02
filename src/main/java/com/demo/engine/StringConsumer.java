@@ -33,30 +33,33 @@ public class StringConsumer extends Thread {
         configProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         configProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         configProperties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        configProperties.put(ConsumerConfig.CLIENT_ID_CONFIG, "offset123");
+//        configProperties.put(ConsumerConfig.CLIENT_ID_CONFIG, "offset123");
         configProperties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         kafkaConsumer = new KafkaConsumer<String, String>(configProperties);
+        kafkaConsumer.subscribe(Arrays.asList(topicName));
+        kafkaConsumer.poll(100);
+        kafkaConsumer.seekToBeginning(kafkaConsumer.assignment());
 
-        kafkaConsumer.subscribe(Arrays.asList(topicName), new ConsumerRebalanceListener() {
-            public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-                System.out.printf("%s topic-partitions are revoked from this consumer\n", Arrays.toString(partitions.toArray()));
-            }
-
-            public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-                System.out.printf("%s topic-partitions are assigned to this consumer\n", Arrays.toString(partitions.toArray()));
-                Iterator<TopicPartition> topicPartitionIterator = partitions.iterator();
-                while (topicPartitionIterator.hasNext()) {
-                    TopicPartition topicPartition = topicPartitionIterator.next();
-                    System.out.println("Current offset is " + kafkaConsumer.position(topicPartition) + " committed offset is ->" +
-                            kafkaConsumer.committed(topicPartition));
-                    System.out.println("Resetting offset to 0");
-                    kafkaConsumer.seekToBeginning(partitions);
-                    System.out.println("Customer current position is " + kafkaConsumer.position(topicPartition));
-                    System.out.println("Customer current partition is: " + topicPartition);
-                }
-            }
-        });
+//        kafkaConsumer.subscribe(Arrays.asList(topicName), new ConsumerRebalanceListener() {
+//            public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+//                System.out.printf("%s topic-partitions are revoked from this consumer\n", Arrays.toString(partitions.toArray()));
+//            }
+//
+//            public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+//                System.out.printf("%s topic-partitions are assigned to this consumer\n", Arrays.toString(partitions.toArray()));
+//                Iterator<TopicPartition> topicPartitionIterator = partitions.iterator();
+//                while (topicPartitionIterator.hasNext()) {
+//                    TopicPartition topicPartition = topicPartitionIterator.next();
+//                    System.out.println("Current offset is " + kafkaConsumer.position(topicPartition) + " committed offset is ->" +
+//                            kafkaConsumer.committed(topicPartition));
+//                    System.out.println("Resetting offset to 0");
+//                    kafkaConsumer.seekToBeginning(partitions);
+//                    System.out.println("Customer current position is " + kafkaConsumer.position(topicPartition));
+//                    System.out.println("Customer current partition is: " + topicPartition);
+//                }
+//            }
+//        });
 
         //Start processing messages
         try {

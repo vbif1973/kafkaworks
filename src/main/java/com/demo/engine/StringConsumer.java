@@ -13,19 +13,19 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
+import org.springframework.beans.factory.annotation.Value;
 
 public class StringConsumer extends Thread {
 
-    private static final String TOPIC = "testpartitions";
-    private static final String GROUP_ID = "cliettwopartitions2";
-    private String topicName;
-    private String groupId;
+    private String topic = "cliettwopartitions3";
+
+    private String groupId = "cliettwopartitions3";
+
+    private static final String GROUP_ID = "cliettwopartitions3";
     private long endingOffset;
     private KafkaConsumer<String, String> kafkaConsumer;
 
-    public StringConsumer(String topicName, String groupId, long endingOffset) {
-        this.topicName = topicName;
-        this.groupId = groupId;
+    public StringConsumer(long endingOffset) {
         this.endingOffset = endingOffset;
     }
 
@@ -39,7 +39,7 @@ public class StringConsumer extends Thread {
         configProperties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         kafkaConsumer = new KafkaConsumer<String, String>(configProperties);
-        kafkaConsumer.subscribe(Arrays.asList(topicName));
+        kafkaConsumer.subscribe(Arrays.asList(topic));
         ConsumerRecords<String, String> records1 = kafkaConsumer.poll(100);
 
         Set<TopicPartition> partitions = kafkaConsumer.assignment();
@@ -77,7 +77,7 @@ public class StringConsumer extends Thread {
     }
 
     public static void main(String[] args) {
-        StringConsumer stringConsumer = new StringConsumer(TOPIC, GROUP_ID, 4l);
+        StringConsumer stringConsumer = new StringConsumer(6l);
         stringConsumer.start();
     }
 

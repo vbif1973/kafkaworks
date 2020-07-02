@@ -4,10 +4,11 @@ spring:
   kafka:
     consumer:
       bootstrap-servers: localhost:9092
-      group-id: cliettwopartitions2
+      group-id: cliettwopartitions3
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      topic: cliettwopartitions3
     producer:
       bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer

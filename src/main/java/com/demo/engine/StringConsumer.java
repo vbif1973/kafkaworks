@@ -22,6 +22,7 @@ public class StringConsumer extends Thread {
     private String groupId = "cliettwopartitions3";
 
     private long endingOffset;
+
     private KafkaConsumer<String, String> kafkaConsumer;
 
     public StringConsumer(long endingOffset) {
@@ -51,6 +52,14 @@ public class StringConsumer extends Thread {
         System.out.println("Current position after seekToBeginning is: "+kafkaConsumer.position(new ArrayList<TopicPartition>(partitions).get(0)));
         System.out.println("Current commited position after seekToBeginning is: "+kafkaConsumer.committed(new ArrayList<TopicPartition>(partitions).get(0)));
 
+        System.out.println("Current position before seekToEnd is: "+kafkaConsumer.position(new ArrayList<TopicPartition>(partitions).get(0)));
+        System.out.println("Current commited position before seekToEnd is: "+kafkaConsumer.committed(new ArrayList<TopicPartition>(partitions).get(0)));
+
+        kafkaConsumer.seekToEnd(kafkaConsumer.assignment());
+
+        System.out.println("Current position after seekToEnd is: "+kafkaConsumer.position(new ArrayList<TopicPartition>(partitions).get(0)));
+        System.out.println("Current commited position after seekToEnd is: "+kafkaConsumer.committed(new ArrayList<TopicPartition>(partitions).get(0)));
+
 
 //        //Start processing messages
         try {
@@ -76,7 +85,7 @@ public class StringConsumer extends Thread {
     }
 
     public static void main(String[] args) {
-        StringConsumer stringConsumer = new StringConsumer(6l);
+        StringConsumer stringConsumer = new StringConsumer(8l);
         stringConsumer.start();
     }
 

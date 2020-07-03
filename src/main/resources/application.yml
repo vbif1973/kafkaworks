@@ -9,9 +9,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       topic: cliettwopartitions3
-      enable:
-        auto:
-          commit: false
+      enable-auto-commit: false
 
     producer:
       bootstrap-servers: localhost:9092
